@@ -1,5 +1,10 @@
 # Component Store
 
+![David](https://img.shields.io/david/dev/componento/component-store)
+
+[![Actions Status](https://github.com/componento/component-store/workflows/{workflow_name}/badge.svg)](https://github.com/{owner}/{repo}/actions)
+
+
 Store to publish and distribute Componento components.
 
 ## Prerequisites
