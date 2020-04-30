@@ -1,8 +1,7 @@
 # Component Store
 
 ![David](https://img.shields.io/david/dev/componento/component-store)
-
-[![Actions Status](https://github.com/componento/component-store/workflows/{workflow_name}/badge.svg)](https://github.com/{owner}/{repo}/actions)
+![Node.js CI](https://github.com/componento/component-store/workflows/Node.js%20CI/badge.svg)
 
 
 Store to publish and distribute Componento components.
@@ -19,9 +18,13 @@ After cloning the repository, you can install dependencies:
 
     npm install
     
-Optional: Compile typescript to javascript
+Compile typescript to javascript:
 
     npm run build
+    
+Run tests:
+
+    npm run test    
     
 Start the server (compiles implicitly):
 
