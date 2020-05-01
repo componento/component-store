@@ -3,8 +3,11 @@
 ![David](https://img.shields.io/david/dev/componento/component-store)
 ![Node.js CI](https://github.com/componento/component-store/workflows/Node.js%20CI/badge.svg)
 
+## About
 
 Store to publish and distribute Componento components.
+
+![Screenshot](./component_store_screenshot.png)
 
 ## Prerequisites
 
