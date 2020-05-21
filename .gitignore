@@ -105,3 +105,9 @@ dist
 
 # IDEA
 .idea
+
+# MacOS
+.DS_Store
+
+# uploaded file
+static/uploads
