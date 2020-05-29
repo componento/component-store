@@ -111,3 +111,4 @@ dist
 
 # uploaded file
 static/uploads
+static/ext

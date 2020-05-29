@@ -5,6 +5,7 @@ import json from "koa-json";
 import bodyParser from "koa-bodyparser";
 
 import componentApiRouter from "./component-api"
+import {postgresDB} from "../database/postgres-db";
 
 const app = new Koa();
 const router = new Router();
@@ -29,3 +30,4 @@ const PORT = process.env.port || 3000;
 app.listen(PORT, () => {
     console.log(`Koa started on port ${PORT}`);
 });
+
