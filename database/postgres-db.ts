@@ -7,7 +7,7 @@ export const postgresDB = async () => {
         port     :  5432,
         username : 'zawar',
         password : 'zawar123',
-        database : 'component_test',
+        database : 'Componento',
         ssl: true,
         logging: ['query', 'error'],
         synchronize: true,
@@ -16,3 +16,4 @@ export const postgresDB = async () => {
 
     });
 };
+

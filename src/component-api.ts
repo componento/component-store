@@ -1,6 +1,5 @@
 import Router from "koa-router";
 import path from "path";
-import {postgresDB} from "../database/postgres-db";
 
 const koaBody = require("koa-body")({multipart:true});
 const koaStatic = require('koa-static')
@@ -20,6 +19,31 @@ fs.readdir(testFolder, (err: any, files: any[]) => {
     });
 });
 
+const __Uploaddirname = 'static/uploads';
+const __Extractdirname = 'static/ext';
+var ext_name = require('path');
+
+function extract_dir(file_name: { toString: () => string; }){
+    console.log('here1:',file_name)
+    // var ext = path.extname(file_name.toString());
+    // const __extpath = path.join(__Extractdirname,file_name.toString(),'sample_component');
+    // var source = path.join(__Uploaddirname,file_name.toString());
+    // var target = path.join(__Extractdirname,file_name.toString());
+    // var someVal = list_of_components.includes(file_name);
+    //
+    // function init() {
+    //     return JSON.parse(fs.readFileSync(path.join(__extpath,fs.readdirSync(__extpath).filter((name:string) => path.extname(name) === '.json')[0])));
+    // }
+    //
+    // if(fs.createReadStream(source).pipe(tar.extract(target))){
+    //     console.log("Created")
+    // }
+    // else{
+    //     console.log("Not Created")
+    // }
+
+}
+
 // Upload File to server API
 router.post("/upload", koaBody,async ctx => {
     const file_name = ctx.request.body.files.foo.name;
@@ -33,7 +57,7 @@ router.post("/upload", koaBody,async ctx => {
             console.log("There was an error")
             ctx.response.redirect("/");
         } else {
-            console.log('inside: ',counter);
+            console.log('inside',counter);
             const reader = fs.createReadStream(file_path);
             // console.log(path.join("static/uploads/", counter.toString())+".tar");
             const stream = fs.createWriteStream(path.join("static/uploads/", counter.toString())+".tar");
@@ -43,6 +67,7 @@ router.post("/upload", koaBody,async ctx => {
             ctx.response.header;
             ctx.res.statusCode = 201;
             counter++;
+            console.log('here',extract_dir(file_name.toString()));
         }
     }
     else{
@@ -115,9 +140,7 @@ router.get("/list_components", async (ctx, next) => {
     ctx.res.statusCode = 200;
 });
 
-const __Uploaddirname = 'static/uploads';
-const __Extractdirname = 'static/ext';
-var ext_name = require('path');
+
 
 // View Details
 router.get("/view_details", async (ctx, next) => {
@@ -144,7 +167,6 @@ router.get("/view_details", async (ctx, next) => {
                 else{
                     console.log("Not Created")
                 }
-                console.log(await postgresDB());
                 ctx.body = init();
                 ctx.res.statusCode = 200;
 
