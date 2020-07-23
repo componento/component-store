@@ -1,19 +1,14 @@
-import { createConnection } from 'typeorm';
+const pgCon = require('pg')
 
-export const postgresDB = async () => {
-    return await createConnection({
-        type     : 'postgres',
-        host     : 'localhost',
-        port     :  5432,
-        username : 'zawar',
-        password : 'zawar123',
-        database : 'Componento',
-        ssl: true,
-        logging: ['query', 'error'],
-        synchronize: true,
-    }).then((connection) => {
-        console.log('Database connection established');
-
-    });
+const pgConfig = {
+    user: 'zawar',
+    host: 'localhost',
+    database: 'Componento',
+    password: 'zawar123',
+    port: 5432,
+    max: 10,
+    idleTimeoutMillis: 30000,
 };
+const pool = new pgCon.Pool(pgConfig);
 
+module.exports = pool;
