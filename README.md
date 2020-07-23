@@ -18,7 +18,7 @@ You need:
 
 You can either setup a local database or start a docker container
 
-    docker run --name componento-db -e POSTGRES_USER=componento -e POSTGRES_PASSWORD=secret POSTGRES_DB=componento -d postgres
+    docker run --name componento-db -e POSTGRES_USER=componento -e POSTGRES_PASSWORD=secret -e POSTGRES_DB=componento -d postgres
 
 ## Build and run
 
