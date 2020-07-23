@@ -13,7 +13,12 @@ Store to publish and distribute Componento components.
 
 You need:
 
-*  Node >= Version 12
+* Node >= Version 12
+* Postgres >= Version 12
+
+You can either setup a local database or start a docker container
+
+    docker run --name componento-db -e POSTGRES_USER=componento -e POSTGRES_PASSWORD=secret -e POSTGRES_DB=componento -d postgres
 
 ## Build and run
 
