@@ -59,9 +59,6 @@ async function extract_dir(updated_filename: { toString: () => string; }){
     var someVal = list_of_components.includes(updated_filename.toString());
     console.log('here:',source,target,__extpath,updated_filename.toString(),someVal)
 
-    // function init() {
-    //     return JSON.parse(fs.readFileSync(path.join(__extpath,fs.readdirSync(__extpath).filter((name:string) => path.extname(name) === '.json')[0])));
-    // }
     if(someVal == true) {
         console.log('I am here');
         var result = packTar(source, target);
@@ -71,54 +68,68 @@ async function extract_dir(updated_filename: { toString: () => string; }){
         console.log("File Not Present");
     }
 }
-
+function chk_exsist_components(file_name: any) {
+    return new Promise((resolve, reject)=> {
+        pool.connect();
+        pool.query("select path from component where path='"+ file_name +"'",
+            function(err: any, data: unknown) {
+                if(err) {
+                    return reject(err);
+                }
+                var infer = JSON.parse(JSON.stringify(data));
+                resolve(infer.rows.length);
+            });
+    })
+}
 // Upload File to server API
 router.post("/upload",koaBody ,async (ctx, next) => {
     const file_name = ctx.request.body.files.foo.name;
     const file_path = ctx.request.body.files.foo.path;
     var ext_name = require('path');
     var ext = path.extname(file_name.toString());
-
+    const users = await chk_exsist_components(file_name);
 
     if(ext == '.tar') {
         if (!file_name) {
             ctx.response.redirect("/");
         } else {
-            const reader = fs.createReadStream(file_path);
+            if (users == 1) {
+                ctx.body = 'File Exsist';
+            } else {
 
-            const updated_filename = counter.toString() + ".tar";
+                const reader = fs.createReadStream(file_path);
 
-            const stream = fs.createWriteStream(path.join("static/uploads/", updated_filename));
-            // const target = path.join(__Extractdirname,updated_filename.toString());
-            // const writeStream = tar.extract(target.toString());
-            reader.pipe(stream);
-            // reader.pipe(writeStream);
+                const updated_filename = counter.toString() + ".tar";
 
-            reader.on('data', (chunk: any) => {
-                var a = chunk.toString().match(/{([^}]*)}/);
-                var b = JSON.parse(a[0]);
-                pool.connect();
-                var QS1 = util.format("INSERT INTO component(uuid, name, provider, description, path, version_id)VALUES('%s','%s','%s','%s','%s','2')", b.id, b.name, b.provider, b.description, updated_filename.toString());
-                pool.query(QS1,
-                    (err: any, res: any) => {
-                        console.log('here1',err, res);
-                    }
-                );
-                var QS2 = util.format("INSERT INTO component_version(version_id, version_name, version_path)VALUES('2','%s','%s')", b.version, updated_filename);
-                pool.query(QS2,
-                    (err: any, res: any) => {
-                        console.log('here2',err, res);
-                        // pool.end();
-                    }
-                );
-            });
+                const stream = fs.createWriteStream(path.join("static/uploads/", updated_filename));
+                reader.pipe(stream);
 
-            console.log('uploading %s -> %s', file_name, stream.path);
-            list_of_components.push(updated_filename);
-            ctx.response.redirect('/components/'+ counter);
-            ctx.response.header;
-            ctx.res.statusCode = 201;
-            counter++;
+                reader.on('data', (chunk: any) => {
+                    var a = chunk.toString().match(/{([^}]*)}/);
+                    var b = JSON.parse(a[0]);
+                    pool.connect();
+                    var QS1 = util.format("INSERT INTO component(uuid, name, provider, description, path, version_id)VALUES('%s','%s','%s','%s','%s','2')", b.id, b.name, b.provider, b.description, updated_filename.toString());
+                    pool.query(QS1,
+                        (err: any, res: any) => {
+                            // console.log('here1',err, res);
+                        }
+                    );
+                    var QS2 = util.format("INSERT INTO component_version(version_id, version_name, version_path)VALUES('2','%s','%s')", b.version, updated_filename);
+                    pool.query(QS2,
+                        (err: any, res: any) => {
+                            // console.log('here2',err, res);
+                            // pool.end();
+                        }
+                    );
+                });
+
+                // console.log('uploading %s -> %s', file_name, stream.path);
+                list_of_components.push(updated_filename);
+                ctx.response.redirect('/components/' + counter);
+                ctx.response.header;
+                ctx.res.statusCode = 201;
+                counter++;
+             }
         }
     }
     else{
@@ -138,25 +149,26 @@ function updatecomponents(file_name: any) {
                 }
                 var infer = JSON.parse(JSON.stringify(data));
                 if (infer.rows.length == 0){
-                    resolve("File not Present");
+                    resolve(0);
                 }
                 else{
+                    const ver_name = file_name.basename()+"_"+counter.toString()+".tar";
                     var up = infer.rows[0];
                     pool.query("update component set uuid='" + up.uuid + "', name='" + up.name + "', provider='" + up.provider + "', description='" + up.description + "', path='" + file_name + "', version_id='" + up.version_id + "' where path='" + file_name + "'",
                         function(err: any, data: unknown) {
                             if(err) {
                                 return reject(err);
                             }
-                            resolve("Component updated");
+                            // resolve("Component updated");
                         });
 
-                    pool.query("update component_version set version_id='" + up.version_id + "', version_name='" + up.version_name + "', version_path='" + file_name + "' where path='" + file_name + "'",
+                    pool.query("update component_version set version_id='" + up.version_id + "', version_name='" + up.version_name + "', version_path='" + ver_name + "' where path='" + file_name + "'",
                         function(err: any, data: unknown) {
                             if(err) {
                                 return reject(err);
                             }
-                            resolve("Component version updated");
                         });
+                    resolve(ver_name);
                 }
             });
     })
@@ -175,14 +187,19 @@ router.put("/update", koaBody,async ctx => {
         } else {
             const users = await updatecomponents(file_name);
             console.log(users);
-            const reader = fs.createReadStream(file_path);
-            const stream = fs.createWriteStream(path.join("static/uploads/", counter.toString())+".tar");
-            reader.pipe(stream);
-            // console.log('uploading %s -> %s', file_name, stream.path);
-            ctx.response.redirect('/components/'+ counter);
-            ctx.response.header;
-            ctx.res.statusCode = 201;
-            counter++;
+            if (users==0){
+                ctx.body = "File Not Present ! Please upload file first";
+            }
+            else{
+                const reader = fs.createReadStream(file_path);
+                const stream = fs.createWriteStream(path.join("static/uploads/", users.toString()));
+                reader.pipe(stream);
+                console.log('uploading %s -> %s', file_name, stream.path);
+                ctx.response.redirect('/components/'+ counter);
+                ctx.response.header;
+                ctx.res.statusCode = 201;
+                counter++;
+            }
         }
     }
     else{
@@ -254,7 +271,6 @@ function getcomponents() {
 router.get("/list_components", async (ctx, next) => {
     const users = await getcomponents();
     ctx.body = users;
-        // {'Components_List' : list_of_components};
     ctx.res.statusCode = 200;
 });
 
@@ -277,9 +293,6 @@ function getdata(file_name: string) {
 router.get("/view_details", async (ctx, next) => {
     var file_name = ctx.request.query.file;
     var ext = path.extname(file_name.toString());
-    // const __extpath = path.join(__Extractdirname,file_name.toString(),'sample_component');
-    // var source = path.join(__Uploaddirname,file_name);
-    // var target = path.join(__Extractdirname,file_name);
     var someVal = list_of_components.includes(file_name);
 
     if(ext == '.tar'){
@@ -288,8 +301,6 @@ router.get("/view_details", async (ctx, next) => {
         }
         else{
             if(someVal == true){
-                // ctx.body = await packTar(source,target);
-                // var ret = await packTar(source, target);
                 const users = await getdata(file_name);
                 ctx.body = users;
                 ctx.res.statusCode = 200;
