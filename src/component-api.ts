@@ -25,49 +25,11 @@ fs.readdir(testFolder, (err: any, files: any[]) => {
     });
 });
 
-
-async function packTar(source: string, target: string) {
-    try {
-        const readStream = fs.createReadStream(source.toString());
-        const writeStream = tar.extract(target.toString());
-
-        console.log('here0',list_of_components,source,target);
-
-        readStream.pipe(writeStream);
-
-        console.log('Directory Created!');
-        writeStream.on('end', () => {
-            console.log('Done');
-        });
-        return 1;
-    }
-    catch (err) {
-        console.error(err)
-    }
-}
-
-
 const __Uploaddirname = 'static/uploads';
 const __Extractdirname = 'static/ext';
 var ext_name = require('path');
 
-async function extract_dir(updated_filename: { toString: () => string; }){
-    var ext = path.extname(updated_filename.toString());
-    const __extpath = path.join(__Extractdirname,updated_filename.toString(),'sample_component');
-    const source = path.join(__Uploaddirname,updated_filename.toString());
-    const target = path.join(__Extractdirname,updated_filename.toString());
-    var someVal = list_of_components.includes(updated_filename.toString());
-    console.log('here:',source,target,__extpath,updated_filename.toString(),someVal)
 
-    if(someVal == true) {
-        console.log('I am here');
-        var result = packTar(source, target);
-        console.log(result);
-    }
-    else{
-        console.log("File Not Present");
-    }
-}
 function chk_exsist_components(file_name: any) {
     return new Promise((resolve, reject)=> {
         pool.connect();
@@ -94,7 +56,7 @@ router.post("/upload",koaBody ,async (ctx, next) => {
             ctx.response.redirect("/");
         } else {
             if (users == 1) {
-                ctx.body = 'File Exsist';
+                ctx.body = 'Component Exsist';
             } else {
 
                 const reader = fs.createReadStream(file_path);
@@ -188,7 +150,7 @@ router.put("/update", koaBody,async ctx => {
             const users = await updatecomponents(file_name);
             console.log(users);
             if (users==0){
-                ctx.body = "File Not Present ! Please upload file first";
+                ctx.body = "Component Not Present ! Please upload component first";
             }
             else{
                 const reader = fs.createReadStream(file_path);
@@ -238,7 +200,7 @@ router.delete("/delete", koaBody,async ctx => {
             }
             else {
                 console.log('File deleted!');
-                ctx.body = "File have been removed";
+                ctx.body = "Component have been removed";
                 ctx.res.statusCode = 200;
 
             }
@@ -284,7 +246,7 @@ function getdata(file_name: string) {
                     return reject(err);
                 }
                 var infer = JSON.parse(JSON.stringify(data));
-                resolve(infer.rows[0]);
+                resolve(infer.rows);
             });
     })
 }
@@ -294,19 +256,21 @@ router.get("/view_details", async (ctx, next) => {
     var file_name = ctx.request.query.file;
     var ext = path.extname(file_name.toString());
     var someVal = list_of_components.includes(file_name);
+    const users = await getdata(file_name);
+    console.log(users);
 
     if(ext == '.tar'){
         if (!file_name) {
-            ctx.body = "Please Enter File Name";
+            ctx.body = "Please Enter Component Name";
         }
         else{
-            if(someVal == true){
-                const users = await getdata(file_name);
-                ctx.body = users;
+            if(Object.values(users).length == 0){
+                ctx.body = "Component Not Present";
                 ctx.res.statusCode = 200;
             }
             else{
-                ctx.body = "File Not Present";
+                ctx.body = Object.values(users);
+                ctx.res.statusCode = 200;
             }
         }
     }
@@ -316,5 +280,46 @@ router.get("/view_details", async (ctx, next) => {
     }
 });
 
+// List version of one Components query
+function singlecomponents(file_name: any) {
+    return new Promise((resolve, reject)=> {
+        pool.connect();
+        pool.query("select c.path, cv.version_name from component c inner join component_version cv on c.version_id=cv.version_id where path='" + file_name + "'",
+            function(err: any, data: unknown) {
+                if(err) {
+                    return reject(err);
+                }
+                var infer = JSON.parse(JSON.stringify(data));
+
+                resolve(infer.rows);
+            });
+    })
+}
+
+//List version of one Components
+router.get("/singlecompo_ver", async (ctx, next) => {
+    var file_name = ctx.request.query.file;
+    var ext = path.extname(file_name.toString());
+    var users = await singlecomponents(file_name);
+
+    if(ext == '.tar'){
+        if (!file_name) {
+            ctx.body = "Wrong Extension";
+        }
+        else{
+            if(Object.values(users).length == 0){
+                ctx.body = "File Not Present";
+                ctx.res.statusCode = 200;
+            }
+            else{
+                ctx.body = Object.values(users);
+            }
+        }
+    }
+    else{
+        ctx.body = "Wrong Extension."
+        ctx.res.statusCode = 422;
+    }
+});
 
 export default router;
