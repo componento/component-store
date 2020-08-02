@@ -4,6 +4,8 @@ import {Json} from "sequelize/types/lib/utils";
 import * as util from "util";
 import {callbackify} from "util";
 const pool = require('../database/postgres-db');
+import { chk_exsist_components, insert_new_components, updatecomponents } from './repo/component_repo';
+import { extract_spec } from './domain/tar_access';
 
 const koaBody = require("koa-body")({multipart:true});
 const koaStatic = require('koa-static')
@@ -30,19 +32,6 @@ const __Extractdirname = 'static/ext';
 var ext_name = require('path');
 
 
-function chk_exsist_components(file_name: any) {
-    return new Promise((resolve, reject)=> {
-        pool.connect();
-        pool.query("select path from component where path='"+ file_name +"'",
-            function(err: any, data: unknown) {
-                if(err) {
-                    return reject(err);
-                }
-                var infer = JSON.parse(JSON.stringify(data));
-                resolve(infer.rows.length);
-            });
-    })
-}
 // Upload File to server API
 router.post("/upload",koaBody ,async (ctx, next) => {
     const file_name = ctx.request.body.files.foo.name;
@@ -55,38 +44,13 @@ router.post("/upload",koaBody ,async (ctx, next) => {
         if (!file_name) {
             ctx.response.redirect("/");
         } else {
-            if (users == 1) {
+            if (Object.values(users).length == 1) {
                 ctx.body = 'Component Exsist';
             } else {
-
-                const reader = fs.createReadStream(file_path);
-
                 const updated_filename = counter.toString() + ".tar";
-
-                const stream = fs.createWriteStream(path.join("static/uploads/", updated_filename));
-                reader.pipe(stream);
-
-                reader.on('data', (chunk: any) => {
-                    var a = chunk.toString().match(/{([^}]*)}/);
-                    var b = JSON.parse(a[0]);
-                    pool.connect();
-                    var QS1 = util.format("INSERT INTO component(uuid, name, provider, description, path, version_id)VALUES('%s','%s','%s','%s','%s','2')", b.id, b.name, b.provider, b.description, updated_filename.toString());
-                    pool.query(QS1,
-                        (err: any, res: any) => {
-                            // console.log('here1',err, res);
-                        }
-                    );
-                    var QS2 = util.format("INSERT INTO component_version(version_id, version_name, version_path)VALUES('2','%s','%s')", b.version, updated_filename);
-                    pool.query(QS2,
-                        (err: any, res: any) => {
-                            // console.log('here2',err, res);
-                            // pool.end();
-                        }
-                    );
-                });
-
+                const tar_data = await extract_spec(file_path, updated_filename);
+                await insert_new_components(tar_data,updated_filename);
                 // console.log('uploading %s -> %s', file_name, stream.path);
-                list_of_components.push(updated_filename);
                 ctx.response.redirect('/components/' + counter);
                 ctx.response.header;
                 ctx.res.statusCode = 201;
@@ -99,42 +63,7 @@ router.post("/upload",koaBody ,async (ctx, next) => {
         ctx.res.statusCode = 422;
     }
 });
-// update query
-// get component query
-function updatecomponents(file_name: any) {
-    return new Promise((resolve, reject)=> {
-        pool.connect();
-        pool.query("select c.uuid, c.name, c.provider, c.description, c.path, c.version_id, cv.version_name from component c inner join component_version cv on c.version_id=cv.version_id where path='" + file_name + "'",
-            function(err: any, data: unknown) {
-                if(err) {
-                    return reject(err);
-                }
-                var infer = JSON.parse(JSON.stringify(data));
-                if (infer.rows.length == 0){
-                    resolve(0);
-                }
-                else{
-                    const ver_name = file_name.basename()+"_"+counter.toString()+".tar";
-                    var up = infer.rows[0];
-                    pool.query("update component set uuid='" + up.uuid + "', name='" + up.name + "', provider='" + up.provider + "', description='" + up.description + "', path='" + file_name + "', version_id='" + up.version_id + "' where path='" + file_name + "'",
-                        function(err: any, data: unknown) {
-                            if(err) {
-                                return reject(err);
-                            }
-                            // resolve("Component updated");
-                        });
 
-                    pool.query("update component_version set version_id='" + up.version_id + "', version_name='" + up.version_name + "', version_path='" + ver_name + "' where path='" + file_name + "'",
-                        function(err: any, data: unknown) {
-                            if(err) {
-                                return reject(err);
-                            }
-                        });
-                    resolve(ver_name);
-                }
-            });
-    })
-}
 // Update File to server API
 router.put("/update", koaBody,async ctx => {
     const file_name = ctx.request.body.files.foo.name;
@@ -147,17 +76,13 @@ router.put("/update", koaBody,async ctx => {
             console.log("There was an error")
             ctx.response.redirect("/");
         } else {
-            const users = await updatecomponents(file_name);
-            console.log(users);
+            const users = await updatecomponents(file_name,counter,file_path);
+            console.log('out: ',users);
             if (users==0){
                 ctx.body = "Component Not Present ! Please upload component first";
             }
             else{
-                const reader = fs.createReadStream(file_path);
-                const stream = fs.createWriteStream(path.join("static/uploads/", users.toString()));
-                reader.pipe(stream);
-                console.log('uploading %s -> %s', file_name, stream.path);
-                ctx.response.redirect('/components/'+ counter);
+                ctx.response.redirect('/components/'+ users);
                 ctx.response.header;
                 ctx.res.statusCode = 201;
                 counter++;
