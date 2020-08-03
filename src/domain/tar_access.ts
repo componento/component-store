@@ -1,12 +1,12 @@
+// Accessing tar file accesor
 import path from "path";
 
 const fs = require("fs");
 const tar = require('tar-fs')
 
-export function extract_spec(file_path: string, updated_filename: string) {
-    const reader = fs.createReadStream(file_path);
-
-    const stream = fs.createWriteStream(path.join("static/uploads/", updated_filename));
+export function extractSpec(filePath: string, updatedFilename: string) {
+    const reader = fs.createReadStream(filePath);
+    const stream = fs.createWriteStream(path.join("static/uploads/", updatedFilename));
     reader.pipe(stream);
     return new Promise((resolve, reject)=> {
         reader
@@ -17,5 +17,19 @@ export function extract_spec(file_path: string, updated_filename: string) {
                 reader.destroy();
             })
             .on("error", reject);
+    });
+}
+
+export function deleteFile(__dirname: string){
+    return new Promise((resolve, reject)=> {
+        fs.unlink(__dirname, function (err: any) {
+            if (err) {
+                resolve(0);
+            }
+            else {
+                resolve(1);
+
+            }
+        });
     });
 }

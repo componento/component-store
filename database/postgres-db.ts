@@ -1,3 +1,4 @@
+// Connection component
 const pgCon = require('pg')
 
 const pgConfig = {
