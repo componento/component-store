@@ -18,7 +18,7 @@ You need:
 
 You can either setup a local database or start a docker container
 
-    docker run --name componento-db -e POSTGRES_USER=componento -e POSTGRES_PASSWORD=secret -e POSTGRES_DB=componento -d postgres
+    docker run --name componento-db -e POSTGRES_USER=componento -e POSTGRES_PASSWORD=secret -e POSTGRES_DB=componento -p 5432:5432 -d postgres
 
 ## Build and run
 
@@ -41,3 +41,9 @@ Start the server (compiles implicitly):
 Start the server in watch mode during development:
 
     npm run watch
+
+## Test API
+
+You can upload a sample component using `curl`:
+
+    curl -X POST -F "foo=@./spec/sample_component.tar" http://localhost:3000/upload
