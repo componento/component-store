@@ -3,31 +3,21 @@ const pool = require('../../database/postgres-db');
 import { extractSpec } from '../domain/tar_access';
 
 export function chkExsistComponents(fileName: any) {
-    return new Promise((resolve, reject)=> {
-        pool.connect().then((conn: any) => {
-            conn.query("SELECT path FROM component WHERE path=$1", [fileName])
-                .then((data: any) => {
-                    let infer = JSON.parse(JSON.stringify(data));
-                    resolve(infer.rows);
-                })
+    return  pool.connect().then((conn: any) => {
+        return conn.query("SELECT path FROM component WHERE path=$1", [fileName])
+                .then((data: any) => data.rows)
                 .finally(() => conn.release());
         })
-    })
 }
 
 
 // Insert query
 export function insertNewComponents(tarData: any,updatedFilename: string) {
-    return new Promise((resolve, reject)=> {
-        pool.connect().then((conn: any) => {
-            conn.query("INSERT INTO component(uuid, name, provider, description, version_name, path)VALUES($1,$2,$3,$4,$5,$6)", [Object.values(tarData)[0], Object.values(tarData)[1], Object.values(tarData)[3], Object.values(tarData)[4], Object.values(tarData)[2] , updatedFilename.toString()])
-                .then((data: any) => {
-                    let infer = JSON.parse(JSON.stringify(data));
-                    resolve(infer.rows);
-                })
+    return pool.connect().then((conn: any) => {
+        return conn.query("INSERT INTO component(uuid, name, provider, description, version_name, path)VALUES($1,$2,$3,$4,$5,$6)", [Object.values(tarData)[0], Object.values(tarData)[1], Object.values(tarData)[3], Object.values(tarData)[4], Object.values(tarData)[2] , updatedFilename.toString()])
+                .then((data: any) => data.rows)
                 .finally(() => conn.release());
         })
-    })
 }
 
 //  update query get component query
@@ -60,57 +50,37 @@ export function updateComponents(fileName: any,counter: number,filePath: string)
 
 // delete component query
 export function deleteComponents(fileName: any) {
-    return new Promise((resolve, reject)=> {
-        pool.connect().then((conn: any) => {
-            pool.query("delete from component where path=$1", [fileName])
-                .then((data: any) => {
-                    let infer = JSON.parse(JSON.stringify(data));
-                    resolve(infer.rows);
-                })
+    return pool.connect().then((conn: any) => {
+        return pool.query("delete from component where path=$1", [fileName])
+                .then((data: any) => data.rows)
                 .finally(() => conn.release());
         })
-    })
 }
 
 // get component query
 export function getComponents() {
-    return new Promise((resolve, reject)=> {
-        pool.connect().then((conn: any) => {
-        pool.query("select path from component")
-            .then((data: any) => {
-                let infer = JSON.parse(JSON.stringify(data));
-                resolve(infer.rows);
-            })
+    return pool.connect().then((conn: any) => {
+        return pool.query("select path from component")
+            .then((data: any) => data.rows)
             .finally(() => conn.release());
         })
-    })
 }
 
 // get file data component query
 export function getData(fileName: string) {
-    return new Promise((resolve, reject)=> {
-        pool.connect().then((conn: any) => {
-        pool.query("select * from component where path=$1", [fileName])
-            .then((data: any) => {
-                let infer = JSON.parse(JSON.stringify(data));
-                resolve(infer.rows);
-            })
+    return pool.connect().then((conn: any) => {
+        return pool.query("select * from component where path=$1", [fileName])
+            .then((data: any) => data.rows)
             .finally(() => conn.release());
         })
-    })
 }
 
 // List version of one Components query
 export function singleComponents(fileName: any) {
-    return new Promise((resolve, reject)=> {
-        pool.connect().then((conn: any) => {
-        pool.query("select c.path, c.version_name, cv.old_path , cv.version_name from component c inner join component_version cv on c.version_id=cv.version_id where path=$1", [fileName])
-            .then((data: any) => {
-                let infer = JSON.parse(JSON.stringify(data));
-                resolve(infer.rows);
-            })
+    return pool.connect().then((conn: any) => {
+        return pool.query("select c.path, c.version_name, cv.old_path , cv.version_name from component c inner join component_version cv on c.version_id=cv.version_id where path=$1", [fileName])
+            .then((data: any) => data.rows)
             .finally(() => conn.release());
         })
-    })
 }
 

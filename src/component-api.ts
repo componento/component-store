@@ -1,23 +1,14 @@
 import Router from "koa-router";
 import path from "path";
-import {Json} from "sequelize/types/lib/utils";
-import * as util from "util";
-import {callbackify} from "util";
-const pool = require('../database/postgres-db');
 import { chkExsistComponents, insertNewComponents, updateComponents, deleteComponents, getComponents, getData, singleComponents } from './repo/component_repo';
 import { extractSpec, deleteFile } from './domain/tar_access';
-import Koa from "koa";
-
 const koaBody = require("koa-body")({multipart:true});
-const koaStatic = require('koa-static')
 const fs = require("fs");
-const tar = require('tar-fs')
-const os = require('os');
 const router = new Router();
 
 
 let counter = 0;
-var list_of_components: any[];
+let list_of_components: any[];
 const testFolder = './static/uploads/';
 fs.readdir(testFolder, (err: any, files: any[]) => {
     files.forEach(file => {
@@ -29,8 +20,8 @@ fs.readdir(testFolder, (err: any, files: any[]) => {
 
 // Upload File to server API
 router.post("/upload",koaBody ,async (ctx, next) => {
-    const fileName = ctx.request.body.files.foo.name;
-    const filePath = ctx.request.body.files.foo.path;
+    const fileName = ctx.request.body.files.tar.name;
+    const filePath = ctx.request.body.files.tar.path;
     let Ext = path.extname(fileName.toString());
     const users = await chkExsistComponents(fileName);
 
@@ -60,8 +51,8 @@ router.post("/upload",koaBody ,async (ctx, next) => {
 
 // Update File to server API
 router.put("/update", koaBody,async ctx => {
-    const fileName = ctx.request.body.files.foo.name;
-    const filePath = ctx.request.body.files.foo.path;
+    const fileName = ctx.request.body.files.tar.name;
+    const filePath = ctx.request.body.files.tar.path;
     let Ext = path.extname(fileName.toString());
 
     if(Ext == '.tar') {
@@ -69,6 +60,7 @@ router.put("/update", koaBody,async ctx => {
             ctx.response.redirect("/");
         } else {
             const users = await updateComponents(fileName,counter,filePath);
+            console.log(users);
             if (users==0){
                 ctx.body = "Component Not Present ! Please upload component first";
             }
