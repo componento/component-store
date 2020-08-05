@@ -33,7 +33,7 @@ export function updateComponents(fileName: any,counter: number,filePath: string)
                         conn.query("insert into component_version(version_id, old_path, uuid, name, provider, description, version_name) select c.version_id, c.path, c.uuid, c.name, c.provider, c.description, c.version_name from component c where c.version_id=$1",[infer1.rows[0].version_id])
                             .then((data: unknown) => {
                             })
-                        const verName = fileName + "_" + counter.toString() + ".tar";
+                        const verName = infer1.rows[0].version_name.toString() + "_" + fileName;
                         const tarData = await extractSpec(filePath, verName);
                         conn.query("update component set uuid=$1, name=$2, version_name=$3, provider=$4, description=$5, path=$6 where version_name=$7 and version_id=$8",
                             [Object.values(tarData)[0],Object.values(tarData)[1], Object.values(tarData)[2], Object.values(tarData)[3], Object.values(tarData)[4], verName, infer1.rows[0].version_name, infer1.rows[0].version_id])
