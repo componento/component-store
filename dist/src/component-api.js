@@ -62,7 +62,6 @@ router.put("/update", koaBody, error_handling_1.findFileMiddleware, async (ctx) 
         }
         else {
             const users = await component_repo_1.updateComponents(fileName, counter, filePath);
-            console.log(users);
             if (users == 0) {
                 ctx.body = "Component Not Present ! Please upload component first";
             }
@@ -86,6 +85,7 @@ router.delete("/delete", koaBody, error_handling_1.findFileMiddleware, async (ct
     const Ext = path_1.default.extname(fileName.toString());
     if (Ext == '.tar') {
         const tarData = await tar_access_1.deleteFile(__dirname);
+        console.log('zawar:', tarData);
         if (tarData == 0) {
             ctx.body = "File not found ";
             ctx.res.statusCode = 200;

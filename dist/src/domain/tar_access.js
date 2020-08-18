@@ -8,6 +8,7 @@ const path_1 = __importDefault(require("path"));
 const fs = require("fs");
 const tar = require('tar-fs');
 function extractSpec(filePath, updatedFilename) {
+    console.log(filePath, updatedFilename);
     const reader = fs.createReadStream(filePath);
     const stream = fs.createWriteStream(path_1.default.join("static/uploads/", updatedFilename));
     reader.pipe(stream);

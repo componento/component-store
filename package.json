@@ -47,21 +47,30 @@
     "typeorm": "^0.2.25"
   },
   "devDependencies": {
+    "@types/chai": "^4.2.12",
     "@types/formidable": "^1.0.31",
-    "@types/jasmine": "^3.5.10",
+    "@types/jasmine": "^3.5.12",
     "@types/koa": "^2.11.3",
     "@types/koa-bodyparser": "^4.3.0",
     "@types/koa-json": "^2.0.18",
     "@types/koa-logger": "^3.1.1",
     "@types/koa-router": "^7.4.0",
+    "@types/mocha": "^8.0.1",
     "@types/multer": "^1.4.3",
     "@types/node": "^13.13.14",
+    "chai": "^4.2.0",
+    "chai-http": "^4.3.0",
     "concurrently": "^5.2.0",
     "databases": "0.0.1",
-    "jasmine": "^3.5.0",
+    "jasmine": "^3.6.1",
+    "jasmine-spec-reporter": "^5.0.2",
+    "jasmine-ts": "^0.3.0",
+    "jasmine-ts-console-reporter": "^3.1.1",
     "multer": "^1.4.2",
     "nodemon": "^2.0.3",
+    "request": "^2.88.2",
     "ts-node": "^8.10.2",
-    "typescript": "^3.8.3"
+    "typescript": "^3.8.3",
+    "typings": "^2.1.1"
   }
 }
