@@ -58,6 +58,7 @@ router.put("/update", koaBody, findFileMiddleware,async (ctx) => {
         if (!fileName) {
             ctx.response.redirect("/");
         } else {
+            console.log("here:",filePath);
             const users = await updateComponents(fileName, counter, filePath);
             if (users == 0) {
                 ctx.body = "Component Not Present ! Please upload component first";
@@ -83,12 +84,12 @@ router.delete("/delete", koaBody, findFileMiddleware,async (ctx) => {
         const tarData = await deleteFile(__dirname);
         console.log('zawar:',tarData);
         if (tarData == 0) {
-            ctx.body = "File not found ";
+            ctx.body = "File not found";
             ctx.res.statusCode = 200;
 
         } else {
             await deleteComponents(fileName);
-            ctx.body = "File removed ";
+            ctx.body = "File removed";
             ctx.res.statusCode = 200;
         }
     } else {
