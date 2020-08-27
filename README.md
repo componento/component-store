@@ -26,6 +26,10 @@ After cloning the repository, you can install dependencies:
 
     npm install
     
+Run database migrations to initialize/update db schema:
+
+    npm run migrate   
+    
 Compile typescript to javascript:
 
     npm run build
@@ -47,3 +51,24 @@ Start the server in watch mode during development:
 You can upload a sample component using `curl`:
 
     curl -X POST -F "foo=@./spec/sample_component.tar" http://localhost:3000/upload
+
+## Database migrations
+
+To create, test, and run database migrations you should install db-migrate as globally:
+
+    npm install -g db-migrate [db-migrate-pg]
+    
+Afterwards you can use `db-migrate` from command line:
+
+    # Reset database
+    db-migrate reset 
+    
+    # Upgrade database
+    db-migrate up
+    
+    # Create a new migration script
+    db-migrate create add-something-to-my-db
+    
+The migrations scripts can be found in directory `migrations`.
+ 
+You can find the complete documentation of db-migrate here: https://db-migrate.readthedocs.io/en/latest/
