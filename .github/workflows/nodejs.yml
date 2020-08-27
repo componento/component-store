@@ -25,6 +25,7 @@ jobs:
         image: postgres
         # Provide the password for postgres
         env:
+          POSTGRES_USER: componento
           POSTGRES_PASSWORD: secret
           POSTGRES_DB : componento
         # Set health checks to wait until postgres has started
@@ -47,10 +48,12 @@ jobs:
       run: npm install
     - run: npm ci
     - run: npm run build --if-present
-    - run: npm run migrate
+    - name: Run DB migrations
+      run: npm run migrate --env ci
+
 #    - run: npm run test
 #      env:
-#        DB_USER : postgres
+#        DB_USER : componento
 #        DB_HOST : localhost
 #        DB_NAME : componento
 #        DB_PASS : secret
