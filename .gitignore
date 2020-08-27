@@ -109,6 +109,9 @@ _dist
 # MacOS
 .DS_Store
 
+# dist folder for typescript
+dist/
+
 # uploaded file
 static/uploads
 static/ext

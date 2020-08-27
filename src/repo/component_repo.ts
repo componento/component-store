@@ -1,5 +1,5 @@
 // Data base component
-const pool = require('../../database/postgres-db');
+const pool = require('./postgres-db');
 import { extractSpec } from '../domain/tar_access';
 
 export function chkExsistComponents(fileName: any) {

@@ -69,6 +69,6 @@ Afterwards you can use `db-migrate` from command line:
     # Create a new migration script
     db-migrate create add-something-to-my-db
     
-The migrations scripts can be found in directory `migrations`.
+The migration scripts can be found in directory `migrations`.
  
 You can find the complete documentation of db-migrate here: https://db-migrate.readthedocs.io/en/latest/

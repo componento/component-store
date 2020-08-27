@@ -6,8 +6,8 @@ exports.setup = function(options, seedLink) {
 exports.up = function(db) {
   return db.createTable('component_version', {
         id: {type: 'bigint', autoIncrement: true, primaryKey: true},
-        version_id: {type: 'bigint', autoIncrement: true, notNull: true},
         uuid: {type: 'string', length: 36},
+        version_id: {type: 'bigint', autoIncrement: true, notNull: true},
         name: {type: 'string', length: 200},
         provider: {type: 'string', length: 200},
         description: {type: 'string', length: 1600},
