@@ -1,6 +1,5 @@
 // Connection component
-const pgCon = require('pg')
-
+const pgCon = require('pg');
 const pgConfig = {
     user: (process.env.DB_USER || 'zawar'),
     host: (process.env.DB_HOST || 'localhost'),
@@ -11,5 +10,5 @@ const pgConfig = {
     idleTimeoutMillis: 30000,
 };
 const pool = new pgCon.Pool(pgConfig);
-
 module.exports = pool;
+//# sourceMappingURL=postgres-db.js.map

@@ -4,12 +4,12 @@
   "description": "Store for Componento components.",
   "main": "index.js",
   "scripts": {
-    "start": "tsc && node dist/index.js",
+    "start": "tsc && node dist/src/index.js",
     "build": "npm run build-ts",
-    "serve": "node dist/index.js",
+    "serve": "node dist/src/index.js",
     "build-ts": "tsc",
     "lint": "tsc --noEmit && eslint \"**/*.{js,ts}\" --quiet --fix",
-    "watch": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"yellow.bold,cyan.bold\" \"tsc -w\" \"nodemon dist/index.js\"",
+    "watch": "concurrently -k -p \\\"[{name}]\\\" -n \\\"TypeScript,Node\\\" -c \\\"yellow.bold,cyan.bold\\\" \\\"tsc -w\\\" \\\"nodemon dist/src/index.js\\\"",
     "test": "ts-node node_modules/jasmine/bin/jasmine --config=jasmine.json"
   },
   "repository": {
@@ -23,9 +23,11 @@
   },
   "homepage": "https://github.com/componento/component-store#readme",
   "dependencies": {
+    "@koa/cors": "^3.1.0",
     "@types/bluebird": "^3.5.32",
     "@types/validator": "^13.1.0",
     "aws-sdk": "^2.675.0",
+    "dotenv": "^8.2.0",
     "express-fileupload": "^1.1.7-alpha.3",
     "formidable": "^1.2.2",
     "koa": "^2.11.0",
@@ -46,21 +48,30 @@
     "typeorm": "^0.2.25"
   },
   "devDependencies": {
+    "@types/chai": "^4.2.12",
     "@types/formidable": "^1.0.31",
-    "@types/jasmine": "^3.5.10",
+    "@types/jasmine": "^3.5.12",
     "@types/koa": "^2.11.3",
     "@types/koa-bodyparser": "^4.3.0",
     "@types/koa-json": "^2.0.18",
     "@types/koa-logger": "^3.1.1",
     "@types/koa-router": "^7.4.0",
+    "@types/mocha": "^8.0.1",
     "@types/multer": "^1.4.3",
     "@types/node": "^13.13.14",
+    "chai": "^4.2.0",
+    "chai-http": "^4.3.0",
     "concurrently": "^5.2.0",
     "databases": "0.0.1",
-    "jasmine": "^3.5.0",
+    "jasmine": "^3.6.1",
+    "jasmine-spec-reporter": "^5.0.2",
+    "jasmine-ts": "^0.3.0",
+    "jasmine-ts-console-reporter": "^3.1.1",
     "multer": "^1.4.2",
     "nodemon": "^2.0.3",
+    "request": "^2.88.2",
     "ts-node": "^8.10.2",
-    "typescript": "^3.8.3"
+    "typescript": "^3.8.3",
+    "typings": "^2.1.1"
   }
 }

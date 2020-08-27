@@ -4,9 +4,9 @@ import logger from "koa-logger";
 import json from "koa-json";
 import bodyParser from "koa-bodyparser";
 import componentApiRouter from "./component-api"
-// import { postgresDB } from '../database/postgres-db';
 const Sequelize = require('sequelize')
 
+const cors = require('@koa/cors');
 const app = new Koa();
 const router = new Router();
 
@@ -19,6 +19,7 @@ router.get("/", async (ctx, next) => {
 app.use(json());
 app.use(logger());
 app.use(bodyParser());
+app.use(cors());
 
 // Routes
 app.use(router.routes()).use(router.allowedMethods());
@@ -27,16 +28,6 @@ app.use(componentApiRouter.routes());
 
 const PORT = process.env.port || 3000;
 
-// export const sequelize = new Sequelize('postgres://zawar:zawar123@localhost:5432/Componento')
 app.listen(PORT, () => {
     console.log(`Koa started on port ${PORT}`);
-    // sequelize
-    //     .authenticate()
-    //     .then(() => {
-    //         console.log('Connection has been established successfully.');
-    //     })
-    //     .catch((err: any) => {
-    //         console.error('Unable to connect to the database:', err);
-    //     });
-    // module.exports = sequelize;
 });
