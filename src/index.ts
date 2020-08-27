@@ -6,6 +6,7 @@ import bodyParser from "koa-bodyparser";
 import componentApiRouter from "./component-api"
 const Sequelize = require('sequelize')
 
+const cors = require('@koa/cors');
 const app = new Koa();
 const router = new Router();
 
@@ -18,6 +19,7 @@ router.get("/", async (ctx, next) => {
 app.use(json());
 app.use(logger());
 app.use(bodyParser());
+app.use(cors());
 
 // Routes
 app.use(router.routes()).use(router.allowedMethods());
