@@ -1,0 +1,22 @@
+{
+  "defaultEnv": "local",
+
+  "local": {
+    "driver": "pg",
+    "user": "componento",
+    "password": "secret",
+    "host": "localhost",
+    "database": "componento",
+    "port": "5432"
+  },
+
+  "ci": {
+    "driver": "pg",
+    "user": "componento",
+    "password": "secret",
+    "host": "localhost",
+    "database": "componento",
+    "port": "5432"
+  }
+
+}
