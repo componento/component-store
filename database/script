@@ -3,21 +3,21 @@ CREATE TABLE COMPONENT_VERSION (
   	Version_id INT NOT NULL,
 	Old_Path varchar(200),
 	UUID varchar(200) NOT NULL,
-    	Name varchar(200),
-    	Provider varchar(200),
-    	Description varchar(200),
-    	Version_Name varchar(200),
+    Name varchar(200),
+    Provider varchar(200),
+    Description varchar(200),
+    Version_Name varchar(200),
   	PRIMARY KEY (Auto_ID)
 );
 
 CREATE TABLE COMPONENT (
 	Auto_ID SERIAL NOT NULL,
 	UUID varchar(200) NOT NULL,
-    	Name varchar(200),
-    	Provider varchar(200),
-    	Description varchar(200),
+    Name varchar(200),
+    Provider varchar(200),
+    Description varchar(200),
 	Version_Name varchar(200),
-    	Path varchar(200),
+    Path varchar(200),
 	Version_Id SERIAL NOT NULL,
 	PRIMARY KEY (Auto_ID, UUID)
 );
