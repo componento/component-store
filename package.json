@@ -27,7 +27,7 @@
     "@koa/cors": "^3.1.0",
     "@types/bluebird": "^3.5.32",
     "@types/validator": "^13.1.0",
-    "aws-sdk": "^2.675.0",
+    "aws-sdk": "^2.814.0",
     "dotenv": "^8.2.0",
     "express-fileupload": "^1.1.10",
     "formidable": "^1.2.2",
